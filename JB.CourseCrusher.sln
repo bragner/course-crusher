@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JB.CourseCrusher.Api", "JB.CourseCrusher.Api\JB.CourseCrusher.Api.csproj", "{4C3D5428-DC30-4747-B53D-A28D1A6621D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JB.CourseCrusher.Api", "JB.CourseCrusher.Api\JB.CourseCrusher.Api.csproj", "{4C3D5428-DC30-4747-B53D-A28D1A6621D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JB.CourseCrusher.Tests", "JB.CourseCrusher.Tests\JB.CourseCrusher.Tests.csproj", "{4DFBEBBE-DB88-452A-AD77-082D46DC94EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{4C3D5428-DC30-4747-B53D-A28D1A6621D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C3D5428-DC30-4747-B53D-A28D1A6621D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C3D5428-DC30-4747-B53D-A28D1A6621D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DFBEBBE-DB88-452A-AD77-082D46DC94EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DFBEBBE-DB88-452A-AD77-082D46DC94EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DFBEBBE-DB88-452A-AD77-082D46DC94EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DFBEBBE-DB88-452A-AD77-082D46DC94EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
