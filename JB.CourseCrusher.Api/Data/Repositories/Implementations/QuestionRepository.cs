@@ -15,7 +15,7 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Implementations
             context.Question.Add(new Question
             {
                 ID = random.Next(1, 100),
-                Name = "Question Name"
+                QuestionPhrase = "Question Name"
             });
             context.SaveChanges();
         }

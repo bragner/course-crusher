@@ -10,6 +10,6 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Interfaces
         ICourseRepository Courses { get; }
         IUserRepository Users { get; }
         IQuestionRepository Questions { get; }
-        void Save();
+        Task<bool> SaveAsync();
     }
 }

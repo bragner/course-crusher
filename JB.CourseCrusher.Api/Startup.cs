@@ -1,4 +1,5 @@
-﻿using JB.CourseCrusher.Api.Data;
+﻿using AutoMapper;
+using JB.CourseCrusher.Api.Data;
 using JB.CourseCrusher.Api.Data.Entities;
 using JB.CourseCrusher.Api.Data.Implementations;
 using JB.CourseCrusher.Api.Data.Repositories.Implementations;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace JB.CourseCrusher.Api
 {
@@ -26,6 +28,8 @@ namespace JB.CourseCrusher.Api
         {
             services.AddDbContext<CourseCrusherContext>();
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

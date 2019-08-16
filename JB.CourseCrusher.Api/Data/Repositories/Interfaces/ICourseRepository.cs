@@ -6,5 +6,7 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Interfaces
 {
     public interface ICourseRepository : IRepository<Course>
     {
+        Task<IEnumerable<Course>> GetAllCoursesAsync();
+        Task<Course> GetCoursesByCourseIdAsync(string courseId);
     }
 }
