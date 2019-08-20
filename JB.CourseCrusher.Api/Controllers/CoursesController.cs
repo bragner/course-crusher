@@ -2,6 +2,8 @@
 using JB.CourseCrusher.Api.Data.Entities;
 using JB.CourseCrusher.Api.Data.Repositories.Interfaces;
 using JB.CourseCrusher.Api.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -11,6 +13,7 @@ namespace JB.CourseCrusher.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class CoursesController : ControllerBase
     {
         private readonly IRepositoryWrapper _repository;
@@ -25,11 +28,12 @@ namespace JB.CourseCrusher.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<CourseModel[]>> Get()
+        [Authorize]
+        public async Task<ActionResult<CourseModel[]>> Get(bool includeQuestions = false)
         {
             try
             {
-                var allCourses = await _repository.Courses.GetAllCoursesAsync();
+                var allCourses = await _repository.Courses.GetAllCoursesAsync(includeQuestions);
 
                 return _mapper.Map<CourseModel[]>(allCourses);
             }
@@ -44,7 +48,7 @@ namespace JB.CourseCrusher.Api.Controllers
         {
             try
             {
-                var currentCourse = await _repository.Courses.GetCoursesByCourseIdAsync(courseId);
+                var currentCourse = await _repository.Courses.GetCourseByCourseIdAsync(courseId);
 
                 if (currentCourse == null) return NotFound($"No course with Course Id: {courseId}");
 
@@ -61,7 +65,7 @@ namespace JB.CourseCrusher.Api.Controllers
         {
             try
             {
-                var currentCourse = await _repository.Courses.GetCoursesByCourseIdAsync(model.CourseId);
+                var currentCourse = await _repository.Courses.GetCourseByCourseIdAsync(model.CourseId);
 
                 if (currentCourse != null) return NotFound($"CourseId already exists.");
 
@@ -76,6 +80,54 @@ namespace JB.CourseCrusher.Api.Controllers
                 if(await _repository.SaveAsync())
                 {
                     return Created(location, _mapper.Map<CourseModel>(course));
+                }
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database failure.");
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPut("{courseId}")]
+        public async Task<ActionResult<CourseModel>> Put(string courseId, CourseModel model)
+        {
+            try
+            {
+                var oldCourse = await _repository.Courses.GetCourseByCourseIdAsync(courseId, false);
+
+                if (oldCourse == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
+
+                _mapper.Map(model, oldCourse);
+
+                if (await _repository.SaveAsync())
+                {
+                    return Ok(_mapper.Map<CourseModel>(oldCourse));
+                }
+            }
+            catch (System.Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database failure.");
+            }
+
+            return BadRequest();
+        }
+
+        [HttpDelete("{courseId}")]
+        public async Task<ActionResult<CourseModel>> Delete(string courseId)
+        {
+            try
+            {
+                var oldCourse = await _repository.Courses.GetCourseByCourseIdAsync(courseId);
+
+                if (oldCourse == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
+
+                _repository.Courses.Delete(oldCourse);
+
+                if (await _repository.SaveAsync())
+                {
+                    return Ok();
                 }
             }
             catch (System.Exception)

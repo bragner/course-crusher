@@ -1,16 +1,21 @@
 ﻿using AutoMapper;
 using JB.CourseCrusher.Api.Data;
-using JB.CourseCrusher.Api.Data.Entities;
-using JB.CourseCrusher.Api.Data.Implementations;
 using JB.CourseCrusher.Api.Data.Repositories.Implementations;
 using JB.CourseCrusher.Api.Data.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.AzureAD.UI;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 
 namespace JB.CourseCrusher.Api
 {
@@ -30,6 +35,10 @@ namespace JB.CourseCrusher.Api
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            //services.AddDefaultIdentity<IdentityUser>();
+
+            services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
+                .AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -37,6 +46,9 @@ namespace JB.CourseCrusher.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+
+            // Get Access Token https://login.microsoftonline.com/1f4c8d27-4bf8-49ce-8e50-a931600c5cd9/oauth2/authorize?client_id=08021e04-07bb-4f07-b0fa-506546b2b637&response_type=id_token&redirect_uri=https%3A%2F%2Flocalhost:44379%2Fsignin-oidc&nonce=12345
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -46,8 +58,9 @@ namespace JB.CourseCrusher.Api
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }

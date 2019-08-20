@@ -12,25 +12,19 @@ namespace JB.CourseCrusher.Api.Data.Implementations
     {
         public CourseRepository(CourseCrusherContext context) : base(context)
         {
-            var random = new Random();
-            context.Courses.Add(new Course
-            {
-                ID = random.Next(1,100),
-                CourseId = $"asd-{random.Next(1,100)}",
-                Name = "asd",
-                Owner = $"owner {random.Next(1, 100)}"
-            });
-            context.SaveChanges();
         }
 
-        public async Task<IEnumerable<Course>> GetAllCoursesAsync()
+        public async Task<IEnumerable<Course>> GetAllCoursesAsync(bool includeQuestions = false)
         {
+            if(includeQuestions)
+                return await base.ReadAll().Include(x => x.Questions).ToArrayAsync();
+
             return await base.ReadAll().ToArrayAsync();
         }
 
-        public async Task<Course> GetCoursesByCourseIdAsync(string courseId)
+        public async Task<Course> GetCourseByCourseIdAsync(string courseId, bool asNoTracking = true)
         {
-            return await base.Read(x => x.CourseId == courseId).FirstOrDefaultAsync();
+            return await base.Read(x => x.CourseId == courseId, asNoTracking).FirstOrDefaultAsync();
         }
     }
 }

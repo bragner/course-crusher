@@ -9,7 +9,7 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Interfaces
     public interface IRepository<T>
     {
         void Create(T enitity);
-        IQueryable<T> Read(Expression<Func<T, bool>> expression);
+        IQueryable<T> Read(Expression<Func<T, bool>> expression, bool asNonTracking);
         IQueryable<T> ReadAll();
         void Update(T enitity);
         void Delete(T enitity);

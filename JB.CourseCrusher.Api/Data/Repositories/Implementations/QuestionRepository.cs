@@ -1,5 +1,6 @@
 ﻿using JB.CourseCrusher.Api.Data.Entities;
 using JB.CourseCrusher.Api.Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +12,11 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Implementations
     {
         public QuestionRepository(CourseCrusherContext context) : base(context)
         {
-            var random = new Random();
-            context.Question.Add(new Question
-            {
-                ID = random.Next(1, 100),
-                QuestionPhrase = "Question Name"
-            });
-            context.SaveChanges();
+        }
+
+        public async Task<IEnumerable<Question>> GetAllQuestionsFromCourse(string courseId)
+        {
+            return await base.Read(x => x.Course.CourseId == courseId).ToArrayAsync();
         }
     }
 }
