@@ -8,5 +8,6 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Interfaces
 {
     public interface IQuestionRepository : IRepository<Question>
     {
+        Task<IEnumerable<Question>> GetAllQuestionsFromCourse(string courseId);
     }
 }

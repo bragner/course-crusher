@@ -20,11 +20,14 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Implementations
         {
             this._context.Set<T>().Add(enitity);
         }
-        public IEnumerable<T> Read(Expression<Func<T, bool>> expression)
+        public IQueryable<T> Read(Expression<Func<T, bool>> expression, bool asNoTracking = false)
         {
-            return _context.Set<T>().Where(expression).AsNoTracking();
+            if(asNoTracking)
+                return _context.Set<T>().Where(expression).AsNoTracking();
+
+            return _context.Set<T>().Where(expression);
         }
-        public IEnumerable<T> ReadAll()
+        public IQueryable<T> ReadAll()
         {
             return _context.Set<T>().AsNoTracking();
         }

@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 
 namespace JB.CourseCrusher.Api.Data.Entities
 {
-    public class Course
+    public class Course : BaseEntity
     {
-        public int ID { get; set; }
+        public string CourseId { get; set; }
         public string Name { get; set; }
+        public string Owner { get; set; }
+        public ICollection<Question> Questions { get; set; }
     }
 }

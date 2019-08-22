@@ -14,21 +14,12 @@ namespace JB.CourseCrusher.Api.Data
         }
 
         public DbSet<Course> Courses { get; set; }
-        public DbSet<User> Users { get; set; }
+        //public DbSet<User> Users { get; set; }
         public DbSet<Question> Question { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseInMemoryDatabase(_config.GetConnectionString("DbName"));
-        }
-
-        protected override void OnModelCreating(ModelBuilder bldr)
-        {
-            bldr.Entity<Course>().HasData(new Course
-            {
-                ID = 1,
-                Name = "Test"
-            });
+            optionsBuilder.UseSqlServer(_config.GetConnectionString("DbConnString"));
         }
     }
 }
