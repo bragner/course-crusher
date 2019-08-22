@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace JB.CourseCrusher.Api.Data.Entities
 {
-    public class User
+    public class User : BaseEntity
     {
-        public int ID { get; set; }
         public string Name { get; set; }
     }
 }

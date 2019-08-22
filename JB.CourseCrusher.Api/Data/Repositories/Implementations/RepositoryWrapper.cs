@@ -52,9 +52,10 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Implementations
             }
         }
 
-        public void Save()
+        public async Task<bool> SaveAsync()
         {
-            _courseCrusherContext.SaveChanges();
+            var resp = await _courseCrusherContext.SaveChangesAsync();
+            return (resp) > 0;
         }
     }
 }

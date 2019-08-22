@@ -1,7 +1,10 @@
 ﻿using JB.CourseCrusher.Api.Data.Entities;
 using JB.CourseCrusher.Api.Data.Repositories.Implementations;
 using JB.CourseCrusher.Api.Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace JB.CourseCrusher.Api.Data.Implementations
 {
@@ -9,13 +12,19 @@ namespace JB.CourseCrusher.Api.Data.Implementations
     {
         public CourseRepository(CourseCrusherContext context) : base(context)
         {
-            var random = new Random();
-            context.Courses.Add(new Course
-            {
-                ID = random.Next(1,100),
-                Name = "asd"
-            });
-            context.SaveChanges();
+        }
+
+        public async Task<IEnumerable<Course>> GetAllCoursesAsync(bool includeQuestions = false)
+        {
+            if(includeQuestions)
+                return await base.ReadAll().Include(x => x.Questions).ToArrayAsync();
+
+            return await base.ReadAll().ToArrayAsync();
+        }
+
+        public async Task<Course> GetCourseByCourseIdAsync(string courseId, bool asNoTracking = true)
+        {
+            return await base.Read(x => x.CourseId == courseId, asNoTracking).Include(x => x.Questions).FirstOrDefaultAsync();
         }
     }
 }
