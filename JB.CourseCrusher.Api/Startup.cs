@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace JB.CourseCrusher.Api
@@ -27,6 +28,7 @@ namespace JB.CourseCrusher.Api
         }
 
         public IConfiguration Configuration { get; }
+        readonly string ReactClientPolicy = "ReactClientPolicy";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -35,11 +37,19 @@ namespace JB.CourseCrusher.Api
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            //services.AddDefaultIdentity<IdentityUser>();
 
-            services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
-                .AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
-
+            //services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
+            //    .AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
+            services.AddCors(options =>
+            {
+                options.AddPolicy(ReactClientPolicy,
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000");
+                    builder.AllowAnyMethod();
+                    builder.AllowAnyHeader();
+                });
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -58,9 +68,10 @@ namespace JB.CourseCrusher.Api
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            
+            app.UseCors(ReactClientPolicy);
             app.UseHttpsRedirection();
-            app.UseAuthentication();
+            //app.UseAuthentication();
+
             app.UseMvc();
         }
     }

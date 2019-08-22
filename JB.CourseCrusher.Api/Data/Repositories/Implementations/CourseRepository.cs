@@ -24,7 +24,7 @@ namespace JB.CourseCrusher.Api.Data.Implementations
 
         public async Task<Course> GetCourseByCourseIdAsync(string courseId, bool asNoTracking = true)
         {
-            return await base.Read(x => x.CourseId == courseId, asNoTracking).FirstOrDefaultAsync();
+            return await base.Read(x => x.CourseId == courseId, asNoTracking).Include(x => x.Questions).FirstOrDefaultAsync();
         }
     }
 }

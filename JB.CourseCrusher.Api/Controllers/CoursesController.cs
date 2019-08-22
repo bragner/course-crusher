@@ -28,7 +28,7 @@ namespace JB.CourseCrusher.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<CourseModel[]>> Get(bool includeQuestions = false)
         {
             try
@@ -122,6 +122,10 @@ namespace JB.CourseCrusher.Api.Controllers
                 var oldCourse = await _repository.Courses.GetCourseByCourseIdAsync(courseId);
 
                 if (oldCourse == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
+
+                var allQuestions = oldCourse.Questions;
+                foreach (var question in allQuestions)
+                    _repository.Questions.Delete(question);
 
                 _repository.Courses.Delete(oldCourse);
 
