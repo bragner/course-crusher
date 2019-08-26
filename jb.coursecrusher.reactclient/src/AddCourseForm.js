@@ -5,9 +5,9 @@ class CourseForm extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            name: '',
-            owner: '',
             courseId: '',
+            name: '',
+            owner: '',     
             questions: []
         }
 
@@ -22,9 +22,16 @@ class CourseForm extends React.Component{
             const body = JSON.stringify(this.state);
             await axios.post('https://localhost:44320/api/courses', body, { headers: {'Content-Type':'application/json'}})
             alert("Sucessfully added course.");
-            this.props.history.push("/courses");
+            const currentState = this.state;
+            this.setState({
+                courseId:'',
+                name:'',
+                owner:''
+            });
+            this.props.onCourseAdded(currentState);
         }
         catch(err){
+            console.log(err);
             alert("Something went wrong...");
         }
     }
@@ -38,15 +45,15 @@ class CourseForm extends React.Component{
         return (
             <form onSubmit={this.handleSubmit}>
                 <div>
-                    <label htmlFor="name">Name</label><br/>
+                    <label htmlFor="name">Name</label>
                     <input type="text" name="name" value={this.state.name} onChange={this.onFieldChange}></input>
                 </div>
                 <div>
-                    <label htmlFor="owner">Owner</label><br/>
+                    <label htmlFor="owner">Owner</label>
                     <input type="text" name="owner" value={this.state.owner} onChange={this.onFieldChange}></input>
                 </div>
                 <div>
-                    <label htmlFor="courseId">Course Id</label><br/>
+                    <label htmlFor="courseId">Course Id</label>
                     <input type="text" name="courseId" value={this.state.courseId} onChange={this.onFieldChange}></input>
                 </div>
                 <input type="submit" value="Add Course" />
