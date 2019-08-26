@@ -2,21 +2,110 @@ body{
   background-color: #282c34;
   color: #ffffff;
   min-height: 50vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   font-size: calc(20px + 2vmin);
-  text-align: center;
 }
-.course-item{
-  border: 1px solid #ffffff;
+.flex-container{
+  display:flex;
+  justify-content: center;
+  flex-flow: row wrap;
+  display: flex;
+}
+.flex-container > div {
+  margin: 0.5%;
+}
+#root{
+  top: 0;
+  left: 0;
+  min-width: 100%;
+}
+#container{
+  top:0;
+  left: 350px;
+  max-width: 50%;
+  padding-left: 350px;
+}
+.list-item{
+  min-width: 100%;
+  border: 0.8px solid #ffffff;
   margin: 10px;
   padding: 10px;
   border-radius: 20px;
-  
+  font-size: 80%;
 }
 a{
   text-decoration: none;
   color: #ffffff;
+}
+.delete-btn{
+  float:right;
+  background-color: #F44336;
+  padding:2px;
+  border-radius: 20%;
+  color: #fff;
+  cursor: pointer;
+  font-size: calc(10px + 2vmin);
+  -webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+}
+label{
+  float:left;
+  font-size: calc(10px + 2vmin);
+}
+input[type=text] {
+  width: 100%;
+  padding: 12px 20px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  }
+
+  .sidenav {
+    height: 100%;
+    width: 300px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 20px;
+    padding: 10px;
+  }
+  .sidenav input[type="submit"]{
+    margin-top:10px;
+    position: relative;
+    vertical-align: top;
+    width: 100%;
+    height: 60px;
+    padding: 0;
+    font-size: 22px;
+    color: white;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    background: #bdc3c7;
+    border: 0;
+    cursor: pointer;
+  }
+  .sidenav input[type="submit"]:hover{
+
+    color: rgb(0, 0, 0);
+    background:#e8ebec 
+  }
+
+img {
+  -webkit-filter: invert(1);
+  filter: invert(1);
+  max-height: 5%;
+  max-width: 5%;
+  }
+
+.save-btn{
+  -webkit-filter: invert(1);
+  filter: invert(1);
+  width: 5%;
+  height: 5%;
+  max-height: 5%; 
+  transition-duration: 0.4s;
+  max-width: 5%;
+  margin-top:auto;
 }

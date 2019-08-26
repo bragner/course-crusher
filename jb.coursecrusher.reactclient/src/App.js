@@ -1,13 +1,13 @@
 import React from 'react';
 import './App.css';
-import Header from './Header.js';
-import Main from './Main.js';
-
+import Home from './Home.js';
+import { Route } from 'react-router-dom'
+import Courses from './Courses.js'
 
 const App = () => (
-  <div>
-    <Header />
-    <Main />
+  <div id="container">
+    <Route exact path="/" component={Home}/>
+    <Route path='/courses' component={Courses}/>
   </div>
 )
 
