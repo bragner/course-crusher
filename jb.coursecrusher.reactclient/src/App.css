@@ -109,3 +109,24 @@ img {
   max-width: 5%;
   margin-top:auto;
 }
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.body {
+    margin: 15px;
+}
+
+h1,
+h2,
+h3 {
+    color: #f0582a;
+}
+
+button {
+    margin: 5px;
+}
+
+

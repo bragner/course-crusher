@@ -1,66 +1,74 @@
-import React from 'react'
-import axios from 'axios'
+import React from "react";
 
-class CourseForm extends React.Component{
-    constructor(props){
-        super(props)
-        this.state = {
-            courseId: '',
-            name: '',
-            owner: '',     
-            questions: []
-        }
+class AddCourseForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.api = this.props.api;
+    this.state = {
+      name: "",
+      description: "",
+      questions: []
+    };
 
-        this.onFieldChange = this.onFieldChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+    this.onFieldChange = this.onFieldChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  async handleSubmit(event) {
+    event.preventDefault();
+    try {
+      this.api.post("courses", this.state).then(response => {
+        this.props.onCourseAdded(response);
+      });
+      this.setState({
+        name: "",
+        description: ""
+      });
+    } catch (err) {
+      console.log(err);
+      alert("Something went wrong...");
     }
+  }
+  onFieldChange(event) {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  }
 
-    async handleSubmit(event) {
-        event.preventDefault();
-        try
-        {
-            const body = JSON.stringify(this.state);
-            await axios.post('https://localhost:44320/api/courses', body, { headers: {'Content-Type':'application/json'}})
-            alert("Sucessfully added course.");
-            const currentState = this.state;
-            this.setState({
-                courseId:'',
-                name:'',
-                owner:''
-            });
-            this.props.onCourseAdded(currentState);
-        }
-        catch(err){
-            console.log(err);
-            alert("Something went wrong...");
-        }
-    }
-    onFieldChange(event) {
-        this.setState({
-            [event.target.name]: event.target.value
-        });
-    }
-
-    render() {
-        return (
-            <form onSubmit={this.handleSubmit}>
-                <div>
-                    <label htmlFor="name">Name</label>
-                    <input type="text" name="name" value={this.state.name} onChange={this.onFieldChange}></input>
-                </div>
-                <div>
-                    <label htmlFor="owner">Owner</label>
-                    <input type="text" name="owner" value={this.state.owner} onChange={this.onFieldChange}></input>
-                </div>
-                <div>
-                    <label htmlFor="courseId">Course Id</label>
-                    <input type="text" name="courseId" value={this.state.courseId} onChange={this.onFieldChange}></input>
-                </div>
-                <input type="submit" value="Add Course" />
-            </form>
-        )
-    }
-
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <div>
+          <label htmlFor="name">Name</label>
+          <input
+            className="form-control"
+            required
+            type="text"
+            name="name"
+            value={this.state.name}
+            onChange={this.onFieldChange}
+          ></input>
+        </div>
+        <div>
+          <label htmlFor="owner">Description</label>
+          <input
+            className="form-control"
+            required
+            type="text"
+            name="description"
+            value={this.state.description}
+            onChange={this.onFieldChange}
+          ></input>
+        </div>
+        <hr />
+        <input
+          className="btn btn-primary float-right"
+          type="submit"
+          value="Add Course"
+        />
+      </form>
+    );
+  }
 }
 
-export default CourseForm;
+export default AddCourseForm;

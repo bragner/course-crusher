@@ -11,3 +11,97 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+ul.unstyled {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-image: linear-gradient(to bottom right, #81d8d0, #4682b4);
+  height: 65px;
+}
+
+nav li {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: bottom;
+  height: 100%;
+  line-height: 65px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+nav .float-right {
+  float: right;
+  margin-right: 20px;
+}
+
+nav li a {
+  display: block;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+}
+
+nav li:hover {
+  background-color: #89cff0;
+}
+button {
+  margin-right: 7.5px;
+}
+.profile-thumbnail {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+}
+.course-header {
+  margin: 10px;
+  margin-top: 20px;
+}
+.course-header h2,
+.course-header button {
+  display: inline;
+  vertical-align: top;
+}
+.course {
+  text-align: left;
+  display: inline-block;
+  min-height: 200px;
+  min-width: 30px;
+  margin-top: 30px;
+}
+.course-div {
+  min-height: 200px;
+  padding: 10px;
+  overflow: hidden;
+  word-wrap: break-word;
+  font-size: 1em;
+}
+.course-description {
+  text-overflow: ellipsis;
+  font-size: 0.8em;
+}
+.course-questions-count {
+  font-size: 0.6em;
+}
+.course-list {
+  margin-top: 70px;
+}
+
+a {
+  color: black;
+}
+a:hover {
+  color: #3d3d3d;
+  text-decoration: none;
+}

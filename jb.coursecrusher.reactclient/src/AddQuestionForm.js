@@ -1,70 +1,176 @@
-import React from 'react'
-import axios from 'axios'
+import React from "react";
+import { InputGroup, FormControl, Form } from "react-bootstrap";
 
-class QuestionForm extends React.Component{
-    constructor(props){
-        super(props)
-        this.state = {
-            courseId:props.courseId,
-            questionId: '',
-            questionPhrase: '',
-            answer: '',
-        }
-        this.onFieldChange = this.onFieldChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
+class AddQuestionForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.api = this.props.api;
+    this.courseId = this.props.courseId;
+    this.state = {
+      questionPhrase: "",
+      answer: "",
+      isMultipleChoiceQuestion: false,
+      option1chk: false,
+      option2chk: false,
+      option3chk: false,
+      option4chk: false,
+      option1txt: "",
+      option2txt: "",
+      option3txt: "",
+      option4txt: ""
+    };
+    this.onFieldChange = this.onFieldChange.bind(this);
+    this.onCheckboxChange = this.onCheckboxChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
 
-    onFieldChange(event) {
-        this.setState({
-            [event.target.name]: event.target.value
+  onFieldChange(event) {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  }
+  onCheckboxChange(event) {
+    this.setState({
+      [event.target.name]: event.target.checked
+    });
+  }
+
+  async handleSubmit(event) {
+    event.preventDefault();
+    console.log(this.state);
+    /*try {
+      this.api
+        .post(`courses/${this.courseId}/questions`, this.state)
+        .then(response => {
+          this.props.onQuestionAdded(response);
         });
-    }
+      this.setState({
+        questionPhrase: "",
+        answer: ""
+      });
+    } catch (err) {
+      console.log(err);
+      alert("Something went wrong...");
+    }*/
+  }
+  onCheck = () => {
+    this.setState({
+      isMultipleChoiceQuestion: !this.state.isMultipleChoiceQuestion
+    });
+  };
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <div>
+          <label htmlFor="questionPhrase">Question phrase</label>
+          <input
+            className="form-control"
+            required
+            type="text"
+            name="questionPhrase"
+            value={this.state.questionPhrase}
+            onChange={this.onFieldChange}
+          ></input>
+        </div>
 
-    async handleSubmit(event) {
-        event.preventDefault();
-        try
-        {
-            const body = {
-                questionPhrase: this.state.questionPhrase,
-                answer: this.state.answer,
-                questionId: this.state.questionId
-            }
-            const jsonBody = JSON.stringify(body);
-            await axios.post(`https://localhost:44320/api/courses/${this.state.courseId}/questions`, jsonBody, { headers: {'Content-Type':'application/json'}})
-            alert(`Sucessfully added question to course: ${this.state.courseId}`);
-            this.setState({
-                questionId:'',
-                questionPhrase:'',
-                answer:''
-            });
-            this.props.onQuestionAdded(body);
-        }
-        catch(err){
-            console.log(err);
-            alert("Something went wrong...");
-        }
-    }
+        <Form.Check
+          type="switch"
+          id="custom-switch"
+          label="Multiple Choice"
+          onChange={this.onCheck}
+        />
+        <hr></hr>
+        {!this.state.isMultipleChoiceQuestion && (
+          <div>
+            <label htmlFor="option1txt">Answer</label>
+            <textarea
+              className="form-control"
+              required
+              type="text"
+              name="option1txt"
+              value={this.state.option1txt}
+              onChange={this.onFieldChange}
+            ></textarea>
+          </div>
+        )}
 
-    render() {
-        return (
-            <form onSubmit={this.handleSubmit}>
-                <div>
-                    <label htmlFor="questionPhrase">Question phrase</label>
-                    <input type="text" name="questionPhrase" value={this.state.questionPhrase} onChange={this.onFieldChange}></input>
-                </div>
-                <div>
-                    <label htmlFor="answer">Answer</label>
-                    <input type="text" name="answer" value={this.state.answer} onChange={this.onFieldChange}></input>
-                </div>
-                <div>
-                    <label htmlFor="questionId">Question Id</label>
-                    <input type="text" name="questionId" value={this.state.questionId} onChange={this.onFieldChange}></input>
-                </div>
-                <input type="submit" value="Add Question" />
-            </form>
-        )
-    }
-
+        {this.state.isMultipleChoiceQuestion && (
+          <div>
+            <div>
+              <InputGroup className="mb-3">
+                <InputGroup.Prepend>
+                  <InputGroup.Checkbox
+                    aria-label="Checkbox for following text input"
+                    name="option1chk"
+                    onChange={this.onCheckboxChange}
+                  />
+                </InputGroup.Prepend>
+                <FormControl
+                  aria-label="Text input with checkbox"
+                  name="option1txt"
+                  onChange={this.onFieldChange}
+                />
+              </InputGroup>
+            </div>
+            <div>
+              <InputGroup className="mb-3">
+                <InputGroup.Prepend>
+                  <InputGroup.Checkbox
+                    aria-label="Checkbox for following text input"
+                    name="option2chk"
+                    onChange={this.onCheckboxChange}
+                  />
+                </InputGroup.Prepend>
+                <FormControl
+                  aria-label="Text input with checkbox"
+                  name="option2txt"
+                  onChange={this.onFieldChange}
+                />
+              </InputGroup>
+            </div>
+            <div>
+              <InputGroup className="mb-3">
+                <InputGroup.Prepend>
+                  <InputGroup.Checkbox
+                    aria-label="Checkbox for following text input"
+                    name="option3chk"
+                    onChange={this.onCheckboxChange}
+                  />
+                </InputGroup.Prepend>
+                <FormControl
+                  aria-label="Text input with checkbox"
+                  name="option3txt"
+                  onChange={this.onFieldChange}
+                />
+              </InputGroup>
+            </div>
+            <div>
+              <InputGroup className="mb-3">
+                <InputGroup.Prepend>
+                  <InputGroup.Checkbox
+                    aria-label="Checkbox for following text input"
+                    name="option4chk"
+                    onChange={this.onCheckboxChange}
+                  />
+                </InputGroup.Prepend>
+                <FormControl
+                  aria-label="Text input with checkbox"
+                  name="option4txt"
+                  onChange={this.onFieldChange}
+                />
+              </InputGroup>
+            </div>
+          </div>
+        )}
+        <hr />
+        <input
+          type="submit"
+          className="btn btn-primary float-right"
+          value="Add Question"
+        />
+      </form>
+    );
+  }
 }
 
-export default QuestionForm;
+export default AddQuestionForm;

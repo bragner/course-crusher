@@ -9,9 +9,9 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Implementations
 {
     public class RepositoryWrapper : IRepositoryWrapper
     {
-        private CourseCrusherContext _courseCrusherContext;
+        private readonly CourseCrusherContext _courseCrusherContext;
         private ICourseRepository _courses;
-        private IUserRepository _users;
+        
         private IQuestionRepository _questions;
 
         public RepositoryWrapper(CourseCrusherContext context)
@@ -27,17 +27,6 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Implementations
                     _courses = new CourseRepository(_courseCrusherContext);
 
                 return _courses;
-            }
-        }
-
-        public IUserRepository Users
-        {
-            get
-            {
-                if (_users == null)
-                    _users = new UserRepository(_courseCrusherContext);
-
-                return _users;
             }
         }
 

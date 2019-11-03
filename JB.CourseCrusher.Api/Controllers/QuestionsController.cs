@@ -16,15 +16,13 @@ namespace JB.CourseCrusher.Api.Controllers
     [ApiController]
     public class QuestionsController : ControllerBase
     {
-        private IRepositoryWrapper _repository;
-        private IMapper _mapper;
-        private LinkGenerator _linkGenerator;
+        private readonly IRepositoryWrapper _repository;
+        private readonly IMapper _mapper;
 
-        public QuestionsController(IRepositoryWrapper repository, IMapper mapper, LinkGenerator linkGenerator)
+        public QuestionsController(IRepositoryWrapper repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
-            _linkGenerator = linkGenerator;
         }
         [HttpGet]
         public async Task<ActionResult<QuestionModel[]>> Get(string courseId)
@@ -73,6 +71,7 @@ namespace JB.CourseCrusher.Api.Controllers
 
                 if (existingQuestion != null) return BadRequest("Question Id already exists.");
 
+                model.QuestionId = Guid.NewGuid().ToString();
                 var question = _mapper.Map<Question>(model);
                 question.Course = course;
 
@@ -80,12 +79,10 @@ namespace JB.CourseCrusher.Api.Controllers
 
                 if (await _repository.SaveAsync())
                 {
-                    var url = _linkGenerator.GetPathByAction(HttpContext, "Get", values: new { courseId, id = model.QuestionId });
-
-                    return Created(url, _mapper.Map<QuestionModel>(question));
+                    return Created(string.Empty, _mapper.Map<QuestionModel>(question));
                 }
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database failure.");
             }

@@ -8,7 +8,7 @@ namespace JB.CourseCrusher.Api.Models
         public string QuestionPhrase { get; set; }
         [Required]
         public string Answer { get; set; }
-        [Required]
+
         public string QuestionId { get; set; }
     }
 }

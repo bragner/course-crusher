@@ -26,5 +26,9 @@ namespace JB.CourseCrusher.Api.Data.Implementations
         {
             return await base.Read(x => x.CourseId == courseId, asNoTracking).Include(x => x.Questions).FirstOrDefaultAsync();
         }
+        public async Task<IEnumerable<Course>> GetAllCoursesForUserAsync(string user, bool includeQuestions = false)
+        {
+            return await base.Read(x => x.Owner == user, includeQuestions).Include(x => x.Questions).ToArrayAsync();
+        }
     }
 }
