@@ -135,7 +135,13 @@ namespace JB.CourseCrusher.Api.Controllers
 
                 var allQuestions = oldCourse.Questions;
                 foreach (var question in allQuestions)
+                {
+                    foreach (var answer in question.Answers)
+                        _repository.Answers.Delete(answer);
+
                     _repository.Questions.Delete(question);
+                }
+
 
                 _repository.Courses.Delete(oldCourse);
 
@@ -227,7 +233,7 @@ namespace JB.CourseCrusher.Api.Controllers
             using LinearGradientBrush brush = new LinearGradientBrush(
                 new Rectangle(0, 0, 600, 200),
                 Color.FromArgb(list[color1].R, list[color1].G, list[color1].B),
-                Color.FromArgb(list[color2].R, list[color2].G, list[color2].B),
+                Color.AntiqueWhite,
                 LinearGradientMode.ForwardDiagonal);
                 brush.SetSigmaBellShape((float)sigma);
                 graphics.FillRectangle(brush, new Rectangle(0, 0, 600, 200));

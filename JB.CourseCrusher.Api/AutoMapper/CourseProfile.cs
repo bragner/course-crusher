@@ -17,6 +17,8 @@ namespace JB.CourseCrusher.Api.AutoMapper
                 .ReverseMap();
             this.CreateMap<Question, QuestionModel>()
                 .ReverseMap();
+            this.CreateMap<Answer, AnswerModel>()
+                .ReverseMap();
         }
         
     }

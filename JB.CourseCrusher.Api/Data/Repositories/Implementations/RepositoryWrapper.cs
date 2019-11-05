@@ -10,9 +10,10 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Implementations
     public class RepositoryWrapper : IRepositoryWrapper
     {
         private readonly CourseCrusherContext _courseCrusherContext;
+
         private ICourseRepository _courses;
-        
         private IQuestionRepository _questions;
+        private IAnswerRepository _answers;
 
         public RepositoryWrapper(CourseCrusherContext context)
         {
@@ -38,6 +39,17 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Implementations
                     _questions = new QuestionRepository(_courseCrusherContext);
 
                 return _questions;
+            }
+        }
+
+        public IAnswerRepository Answers
+        {
+            get
+            {
+                if (_answers == null)
+                    _answers = new AnswerRepository(_courseCrusherContext);
+
+                return _answers;
             }
         }
 

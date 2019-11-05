@@ -1,13 +1,16 @@
 import React from "react";
 
-class AddCourseForm extends React.Component {
+class EditCourseForm extends React.Component {
   constructor(props) {
     super(props);
     this.api = this.props.api;
+
     this.state = {
-      name: "",
-      description: "",
-      questions: []
+      courseId: this.props.course.courseId,
+      name: this.props.course.name,
+      image: this.props.course.image,
+      description: this.props.course.description,
+      questions: this.props.course.questions
     };
 
     this.onFieldChange = this.onFieldChange.bind(this);
@@ -17,13 +20,15 @@ class AddCourseForm extends React.Component {
   async handleSubmit(event) {
     event.preventDefault();
     try {
-      this.api.post("courses", this.state).then(response => {
-        this.props.onCourseAdded(response);
-      });
-      this.setState({
-        name: "",
-        description: ""
-      });
+      this.api
+        .put(`courses/${this.state.courseId}`, this.state)
+        .then(response => {
+          this.props.onCourseEdited(response);
+          this.setState({
+            name: response.name,
+            description: response.description
+          });
+        });
     } catch (err) {
       console.log(err);
       alert("Something went wrong...");
@@ -37,7 +42,7 @@ class AddCourseForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form>
         <div>
           <label htmlFor="name">Name</label>
           <input
@@ -64,11 +69,12 @@ class AddCourseForm extends React.Component {
         <input
           className="btn btn-primary float-right"
           type="submit"
-          value="Add Course"
+          value="Save"
+          onClick={this.handleSubmit}
         />
       </form>
     );
   }
 }
 
-export default AddCourseForm;
+export default EditCourseForm;

@@ -1,0 +1,44 @@
+.course-header {
+  margin-top: 20px;
+}
+.course-header div,
+.course-header button {
+  display: inline-block;
+  vertical-align: middle;
+}
+.course {
+  display: inline-block;
+  min-height: 200px;
+  min-width: 30px;
+  margin-top: 30px;
+}
+.course-div {
+  min-height: 200px;
+  padding: 10px;
+  overflow: hidden;
+  word-wrap: break-word;
+  font-size: 1em;
+}
+.course-description {
+  text-overflow: ellipsis;
+  font-size: 0.8em;
+}
+.course-questions-count {
+  font-size: 0.6em;
+}
+.course-list {
+  margin-top: 70px;
+}
+a {
+  color: black;
+}
+a:hover {
+  color: #3d3d3d;
+  text-decoration: none;
+}
+.image-cropper {
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  border-radius: 50%;
+}

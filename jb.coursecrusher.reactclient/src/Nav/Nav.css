@@ -1,0 +1,41 @@
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background-image: linear-gradient(to bottom right, #81d8d0, #4682b4);
+  height: 65px;
+}
+
+nav li {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: bottom;
+  height: 100%;
+  line-height: 65px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+nav li a {
+  display: block;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+}
+
+nav li:hover {
+  background-color: #89cff0;
+}
+.profile-thumbnail {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+}
+#dropdown-profile-menu {
+  left: -45px !important;
+}

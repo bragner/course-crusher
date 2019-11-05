@@ -24,11 +24,11 @@ namespace JB.CourseCrusher.Api.Data.Implementations
 
         public async Task<Course> GetCourseByCourseIdAsync(string courseId, bool asNoTracking = true)
         {
-            return await base.Read(x => x.CourseId == courseId, asNoTracking).Include(x => x.Questions).FirstOrDefaultAsync();
+            return await base.Read(x => x.CourseId == courseId, asNoTracking).Include(x => x.Questions).ThenInclude(y => y.Answers).FirstOrDefaultAsync();
         }
         public async Task<IEnumerable<Course>> GetAllCoursesForUserAsync(string user, bool includeQuestions = false)
         {
-            return await base.Read(x => x.Owner == user, includeQuestions).Include(x => x.Questions).ToArrayAsync();
+            return await base.Read(x => x.Owner == user, includeQuestions).Include(x => x.Questions).ThenInclude(y => y.Answers).ToArrayAsync();
         }
     }
 }

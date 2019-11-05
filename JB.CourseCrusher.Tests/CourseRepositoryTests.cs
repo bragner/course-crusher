@@ -77,8 +77,7 @@ namespace JB.CourseCrusher.Tests
                         new Question
                         {
                             QuestionId = "question1",
-                            QuestionPhrase = "What color is the sky?",
-                            Answer = "Blue"
+                            QuestionPhrase = "What color is the sky?"
                         }
                     }
                 },
@@ -99,7 +98,6 @@ namespace JB.CourseCrusher.Tests
                     {
                         QuestionId = "question2",
                         QuestionPhrase = "Is the earth flat?",
-                        Answer = "No"
                     }
                 }
             };

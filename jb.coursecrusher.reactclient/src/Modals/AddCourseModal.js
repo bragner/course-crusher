@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Modal, Button } from "react-bootstrap";
-import AddQuestionForm from "./AddQuestionForm";
+import AddCourseForm from "../Forms/AddCourseForm.js";
 
 class AddQuestionModal extends Component {
   constructor(props) {
@@ -14,25 +14,26 @@ class AddQuestionModal extends Component {
   handleShow = () => {
     this.setState({ show: !this.state.show });
   };
-  onQuestionAdded = question => {
+  onCourseAdded = course => {
     this.handleShow();
-    this.props.onQuestionAdded(question);
+    this.props.onCourseAdded(course);
   };
   render() {
     return (
       <>
-        <Button variant="secondary" onClick={this.handleShow}>
-          Add question (+)
-        </Button>
+        <div className="float-right">
+          <Button onClick={this.handleShow}>Add course (+)</Button>
+        </div>
+
         <Modal show={this.state.show} onHide={this.handleShow}>
           <Modal.Header closeButton>
-            <Modal.Title>Add question</Modal.Title>
+            <Modal.Title>Add course</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <AddQuestionForm
+            <AddCourseForm
+              auth={this.props.auth}
               api={this.api}
-              courseId={this.state.courseId}
-              onQuestionAdded={this.onQuestionAdded}
+              onCourseAdded={this.onCourseAdded.bind()}
             />
           </Modal.Body>
         </Modal>

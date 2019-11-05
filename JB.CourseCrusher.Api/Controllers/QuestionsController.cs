@@ -74,7 +74,9 @@ namespace JB.CourseCrusher.Api.Controllers
                 model.QuestionId = Guid.NewGuid().ToString();
                 var question = _mapper.Map<Question>(model);
                 question.Course = course;
-
+                question.Answers = question.Answers.Where(x => !string.IsNullOrEmpty(x.AnswerPhrase)).ToList();
+                question.Answers.ForEach(x => x.AnswerId = Guid.NewGuid().ToString());
+               
                 _repository.Questions.Create(question);
 
                 if (await _repository.SaveAsync())
@@ -129,6 +131,9 @@ namespace JB.CourseCrusher.Api.Controllers
                 var question = allQuestions.FirstOrDefault(x => x.QuestionId == questionId);
 
                 if (question == null) return NotFound($"Question with Id [{questionId}] doesn't exists.");
+
+                foreach (var answer in question.Answers)
+                    _repository.Answers.Delete(answer);
 
                 _repository.Questions.Delete(question);
 

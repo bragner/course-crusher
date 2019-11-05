@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import "./index.css";
-import Home from "./Home.js";
 import { Route } from "react-router-dom";
-import Courses from "./Courses.js";
-import SingleCourse from "./SingleCourse.js";
-import Nav from "./Nav";
+import Home from "./Home/Home.js";
+import Nav from "./Nav/Nav";
 import Auth from "./Auth/Auth";
 import Callback from "./Auth/AuthCallback";
+import Courses from "./Course/Courses.js";
+import SingleCourse from "./Course/SingleCourse.js";
+
 import API from "./api";
 
 class App extends Component {
@@ -20,7 +21,7 @@ class App extends Component {
 
   render() {
     return (
-      <>
+      <div>
         <Nav auth={this.auth} />
         <Route exact path="/" component={Home} />
         <Route
@@ -36,7 +37,7 @@ class App extends Component {
           path="/courses/:id"
           render={props => <SingleCourse auth={this.auth} {...props} />}
         />
-      </>
+      </div>
     );
   }
 }

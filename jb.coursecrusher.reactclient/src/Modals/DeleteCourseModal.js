@@ -21,9 +21,14 @@ class DeleteCourseModal extends Component {
   render() {
     return (
       <>
-        <Button variant="danger" onClick={this.handleShow}>
-          Delete course
-        </Button>
+        <div>
+          <Button variant="danger" onClick={this.handleShow}>
+            Delete{" "}
+            <span role="img" aria-label="delete">
+              ❌
+            </span>
+          </Button>
+        </div>
         <Modal show={this.state.show} onHide={this.handleShow}>
           <Modal.Header closeButton>
             <Modal.Title>Delete course</Modal.Title>
