@@ -16,7 +16,7 @@ class Question extends Component {
     this.props.onQuestionEdited(question);
   };
   onQuestionDeleted = questionId => {
-    this.props.onQuestionEdited(questionId);
+    this.props.onQuestionDeleted(questionId);
   };
   render() {
     return (
@@ -27,8 +27,8 @@ class Question extends Component {
             justifyContent: "space-between"
           }}
         >
-          <div>
-            <h4>{this.state.question.questionPhrase}</h4>
+          <div style={{ maxWidth: "50%" }}>
+            <h6>{this.state.question.questionPhrase}</h6>
           </div>
           <div
             style={{
@@ -56,7 +56,7 @@ class Question extends Component {
         </div>
         <div>
           <Row>
-            <Col>
+            <Col style={{ overflowWrap: "break-word", maxWidth: "50%" }}>
               {!this.state.question.isMultipleChoice &&
                 this.state.question.answers.map(answer => {
                   return (
@@ -82,14 +82,14 @@ class Question extends Component {
             </Col>
             <Col>
               {this.state.question.image !== null && (
-                <>
+                <div style={{ marginTop: "10px" }}>
                   <img
                     alt="question pic"
                     className="col-9 img-fluid img-responsive img-thumbnail"
                     src={this.state.question.image}
                     style={{ marginBottom: "5px" }}
                   />
-                </>
+                </div>
               )}
             </Col>
           </Row>

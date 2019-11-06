@@ -20,5 +20,12 @@ namespace JB.CourseCrusher.Api.Data
         {
             optionsBuilder.UseSqlServer(_config.GetConnectionString("DbConnString"));
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Course>().Property(e => e.CreatedDate).HasDefaultValueSql("getutcdate()");
+            modelBuilder.Entity<Question>().Property(e => e.CreatedDate).HasDefaultValueSql("getutcdate()");
+            modelBuilder.Entity<Answer>().Property(e => e.CreatedDate).HasDefaultValueSql("getutcdate()");
+        }
     }
 }

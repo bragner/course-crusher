@@ -8,6 +8,9 @@ import { Spinner } from "react-bootstrap";
 class Courses extends Component {
   constructor(props) {
     super(props);
+
+    if (!this.props.auth.isAuthenticated()) return this.props.auth.login();
+
     this.api = this.props.api;
     if (this.props.api === undefined) {
       this.api = new API(this.props.auth.getAccessToken());
@@ -92,7 +95,8 @@ class Courses extends Component {
                       key={course.courseId}
                       to={{
                         pathname: `/courses/${course.courseId}`,
-                        course: course
+                        course: course,
+                        auth: this.props.auth
                       }}
                     >
                       <div className="course col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">

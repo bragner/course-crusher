@@ -23,7 +23,7 @@ class App extends Component {
     return (
       <div>
         <Nav auth={this.auth} />
-        <Route exact path="/" component={Home} />
+        <Route exact path="/" render={() => <Home auth={this.auth} />} />
         <Route
           exact
           path="/courses"

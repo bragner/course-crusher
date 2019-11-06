@@ -59,6 +59,9 @@ namespace JB.CourseCrusher.Api.Controllers
 
                 if (currentCourse == null) return NotFound($"No course with Course Id: {courseId}");
 
+                var email = User.FindFirst("https://cc/email")?.Value;
+                if (currentCourse.Owner != email) return this.StatusCode(StatusCodes.Status403Forbidden, "You do not have access to this course.");
+
                 return _mapper.Map<CourseModel>(currentCourse);
             }
             catch (System.Exception)
@@ -109,6 +112,9 @@ namespace JB.CourseCrusher.Api.Controllers
 
                 if (oldCourse == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
 
+                var email = User.FindFirst("https://cc/email")?.Value;
+                if (oldCourse.Owner != email) return this.StatusCode(StatusCodes.Status403Forbidden, "You do not have access to this course.");
+
                 _mapper.Map(model, oldCourse);
 
                 if (await _repository.SaveAsync())
@@ -132,6 +138,9 @@ namespace JB.CourseCrusher.Api.Controllers
                 var oldCourse = await _repository.Courses.GetCourseByCourseIdAsync(courseId);
 
                 if (oldCourse == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
+
+                var email = User.FindFirst("https://cc/email")?.Value;
+                if (oldCourse.Owner != email) return this.StatusCode(StatusCodes.Status403Forbidden, "You do not have access to this course.");
 
                 var allQuestions = oldCourse.Questions;
                 foreach (var question in allQuestions)

@@ -23,7 +23,6 @@ class DeleteCourseModal extends Component {
       <>
         <div>
           <Button variant="danger" onClick={this.handleShow}>
-            Delete{" "}
             <span role="img" aria-label="delete">
               ❌
             </span>

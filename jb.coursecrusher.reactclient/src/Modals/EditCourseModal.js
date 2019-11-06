@@ -24,7 +24,6 @@ class EditCourseModal extends Component {
       <>
         <div style={{ marginRight: "10px" }}>
           <Button variant="secondary" onClick={this.handleShow}>
-            Edit{" "}
             <span role="img" aria-label="Edit">
               ✏
             </span>

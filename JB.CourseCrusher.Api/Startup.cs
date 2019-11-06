@@ -41,12 +41,12 @@ namespace JB.CourseCrusher.Api
                 options.AddPolicy(ReactClientPolicy,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:3000");
+                    builder.WithOrigins(Configuration.GetValue<string>("CORS"));
                     builder.AllowAnyMethod();
                     builder.AllowAnyHeader();
                 });
             });
-            services.AddMvc();
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -54,7 +54,7 @@ namespace JB.CourseCrusher.Api
             }).AddJwtBearer(options =>
             {
                 options.Authority = "https://course-crusher.eu.auth0.com/";
-                options.Audience = "https://localhost:44320";
+                options.Audience = Configuration.GetValue<string>("Audience");
             });
 
             services.AddMvc(options => {

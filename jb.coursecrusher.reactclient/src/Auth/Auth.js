@@ -1,14 +1,15 @@
 ﻿import auth0 from "auth0-js";
+import Config from "../Config";
 
 const REDIRECT_ON_LOGIN = "redirect_on_login";
 
 let _accessToken = null;
 let _expiresAt = null;
 
-let domain = "course-crusher.eu.auth0.com";
-let client_id = "";
-let callback_url = "http://localhost:3000/callback";
-let audience = "https://localhost:44320";
+let domain = Config.AUTH_0_DOMAIN;
+let client_id = Config.AUTH_0_CLIENT_ID;
+let callback_url = `${Config.CLIENT_ENDPOINT}/callback`;
+let audience = Config.API_ENDPOINT;
 
 export default class Auth {
   constructor(history) {
@@ -25,8 +26,7 @@ export default class Auth {
   }
 
   isAuthenticated() {
-    const ea = localStorage.getItem("expiresAt");
-    return new Date().getTime() < ea;
+    return new Date().getTime() < _expiresAt;
   }
 
   login = () => {
@@ -34,6 +34,7 @@ export default class Auth {
       REDIRECT_ON_LOGIN,
       JSON.stringify(this.history.location)
     );
+
     this.auth0.authorize();
   };
 
@@ -45,11 +46,14 @@ export default class Auth {
           localStorage.getItem(REDIRECT_ON_LOGIN) === "undefined"
             ? "/"
             : JSON.parse(localStorage.getItem(REDIRECT_ON_LOGIN));
-        this.history.push(redirectLocation);
+        this.getProfile((profile, err) => {
+          localStorage.setItem("profile-img", profile.picture);
+
+          this.history.push(redirectLocation);
+        });
       } else if (err) {
         this.history.push("/");
-        alert(`Error: ${err.error}. Check the console for further details`);
-        console.log(err);
+        alert(`Error: ${err.error}.`);
       }
       localStorage.removeItem(REDIRECT_ON_LOGIN);
     });
@@ -58,20 +62,16 @@ export default class Auth {
   logout = () => {
     this.auth0.logout({
       clientID: client_id,
-      returnTo: "http://localhost:3000"
+      returnTo: Config.CLIENT_ENDPOINT
     });
-    localStorage.removeItem("profile-img");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("expiresAt");
   };
 
   getAccessToken = () => {
-    const at = localStorage.getItem("accessToken");
-    if (!at) {
+    if (!_accessToken) {
       throw new Error("No access token found.");
     }
 
-    return at;
+    return _accessToken;
   };
   getProfile = cb => {
     if (this.userProfile) return cb(this.userProfile);
@@ -82,11 +82,24 @@ export default class Auth {
   };
   setSession = authResult => {
     _expiresAt = authResult.expiresIn * 1000 + new Date().getTime();
+
     _accessToken = authResult.accessToken;
-    localStorage.setItem("accessToken", _accessToken);
-    localStorage.setItem("expiresAt", _expiresAt);
-    this.getProfile((profile, error) => {
-      localStorage.setItem("profile-img", profile.picture);
-    });
+
+    this.scheduleTokenRenewal();
   };
+  renewToken(cb) {
+    this.auth0.checkSession({}, (err, result) => {
+      if (err) {
+        console.log(`Error: ${err.error} - ${err.error_description}`);
+      } else {
+        this.setSession(result);
+      }
+      if (cb) cb(err, result);
+    });
+  }
+
+  scheduleTokenRenewal() {
+    const delay = _expiresAt - Date.now();
+    if (delay > 0) setTimeout(() => this.renewToken(), delay);
+  }
 }

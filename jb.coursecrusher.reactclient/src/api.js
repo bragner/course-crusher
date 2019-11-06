@@ -1,6 +1,8 @@
+import Config from "./Config";
+
 export default class API {
   constructor(auth) {
-    this.endpoint = "https://localhost:44320/api/";
+    this.endpoint = `${Config.API_ENDPOINT}/api/`;
     this.auth = auth;
   }
 

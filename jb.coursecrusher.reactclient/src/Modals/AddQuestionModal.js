@@ -22,7 +22,7 @@ class AddQuestionModal extends Component {
     return (
       <>
         <Button variant="primary" onClick={this.handleShow}>
-          Add question
+          Add question{" "}
           <span role="img" aria-label="Add">
             ➕
           </span>

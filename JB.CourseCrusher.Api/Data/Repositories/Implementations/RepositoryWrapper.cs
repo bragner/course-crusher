@@ -1,5 +1,8 @@
-﻿using JB.CourseCrusher.Api.Data.Implementations;
+﻿using JB.CourseCrusher.Api.Data.Entities;
+using JB.CourseCrusher.Api.Data.Implementations;
 using JB.CourseCrusher.Api.Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +58,22 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Implementations
 
         public async Task<bool> SaveAsync()
         {
+            var entries = _courseCrusherContext.ChangeTracker
+                           .Entries()
+                           .Where(e => e.Entity is BaseEntity && (
+                                   e.State == EntityState.Added
+                                   || e.State == EntityState.Modified));
+
+            foreach (var entityEntry in entries)
+            {
+                ((BaseEntity)entityEntry.Entity).ModifiedDate = DateTime.Now;
+
+                if (entityEntry.State == EntityState.Added)
+                {
+                    ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.Now;
+                }
+            }
+
             var resp = await _courseCrusherContext.SaveChangesAsync();
             return (resp) > 0;
         }
