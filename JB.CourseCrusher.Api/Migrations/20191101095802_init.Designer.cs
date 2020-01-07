@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JB.CourseCrusher.Api.Migrations
 {
     [DbContext(typeof(CourseCrusherContext))]
-    [Migration("20190819115022_init")]
+    [Migration("20191101095802_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "3.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -25,17 +25,29 @@ namespace JB.CourseCrusher.Api.Migrations
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CourseId");
+                    b.Property<string>("CourseId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedDate");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Owner");
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Owner")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -46,42 +58,35 @@ namespace JB.CourseCrusher.Api.Migrations
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Answer");
+                    b.Property<string>("Answer")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CourseID");
+                    b.Property<int?>("CourseID")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedDate");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("QuestionId");
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("QuestionPhrase");
+                    b.Property<string>("QuestionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuestionPhrase")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
                     b.HasIndex("CourseID");
 
                     b.ToTable("Question");
-                });
-
-            modelBuilder.Entity("JB.CourseCrusher.Api.Data.Entities.User", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("JB.CourseCrusher.Api.Data.Entities.Question", b =>

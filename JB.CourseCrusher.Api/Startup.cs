@@ -3,9 +3,6 @@ using JB.CourseCrusher.Api.Data;
 using JB.CourseCrusher.Api.Data.Repositories.Implementations;
 using JB.CourseCrusher.Api.Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.AzureAD.UI;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -38,27 +36,35 @@ namespace JB.CourseCrusher.Api
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            //services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
-            //    .AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
             services.AddCors(options =>
             {
                 options.AddPolicy(ReactClientPolicy,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:3000");
+                    builder.WithOrigins(Configuration.GetValue<string>("CORS"));
                     builder.AllowAnyMethod();
                     builder.AllowAnyHeader();
                 });
             });
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = "https://course-crusher.eu.auth0.com/";
+                options.Audience = Configuration.GetValue<string>("Audience");
+            });
+
+            services.AddMvc(options => {
+                options.EnableEndpointRouting = false;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
-            // Get Access Token https://login.microsoftonline.com/1f4c8d27-4bf8-49ce-8e50-a931600c5cd9/oauth2/authorize?client_id=08021e04-07bb-4f07-b0fa-506546b2b637&response_type=id_token&redirect_uri=https%3A%2F%2Flocalhost:44379%2Fsignin-oidc&nonce=12345
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -68,9 +74,10 @@ namespace JB.CourseCrusher.Api
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseCors(ReactClientPolicy);
             app.UseHttpsRedirection();
-            //app.UseAuthentication();
+            app.UseAuthentication();
 
             app.UseMvc();
         }

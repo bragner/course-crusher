@@ -16,7 +16,7 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Implementations
 
         public async Task<IEnumerable<Question>> GetAllQuestionsFromCourse(string courseId)
         {
-            return await base.Read(x => x.Course.CourseId == courseId).ToArrayAsync();
+            return await base.Read(x => x.Course.CourseId == courseId).Include(x => x.Answers).ToArrayAsync();
         }
     }
 }

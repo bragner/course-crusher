@@ -8,8 +8,8 @@ namespace JB.CourseCrusher.Api.Data.Repositories.Interfaces
     public interface IRepositoryWrapper
     {
         ICourseRepository Courses { get; }
-        IUserRepository Users { get; }
         IQuestionRepository Questions { get; }
+        IAnswerRepository Answers { get; }
         Task<bool> SaveAsync();
     }
 }

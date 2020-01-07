@@ -2,38 +2,45 @@
 using JB.CourseCrusher.Api.Data.Entities;
 using JB.CourseCrusher.Api.Data.Repositories.Interfaces;
 using JB.CourseCrusher.Api.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Drawing.Text;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace JB.CourseCrusher.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+    [Authorize]
     public class CoursesController : ControllerBase
     {
         private readonly IRepositoryWrapper _repository;
         private readonly IMapper _mapper;
-        private readonly LinkGenerator _linkGenerator;
 
-        public CoursesController(IRepositoryWrapper repository, IMapper mapper, LinkGenerator linkGenerator)
+        private readonly Random random = new Random();
+
+        public CoursesController(IRepositoryWrapper repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
-            _linkGenerator = linkGenerator;
         }
 
         [HttpGet]
-        //[Authorize]
         public async Task<ActionResult<CourseModel[]>> Get(bool includeQuestions = false)
         {
             try
             {
-                var allCourses = await _repository.Courses.GetAllCoursesAsync(includeQuestions);
+                var email = User.FindFirst("https://cc/email")?.Value;
+
+                var allCourses = await _repository.Courses.GetAllCoursesForUserAsync(email, includeQuestions);
 
                 return _mapper.Map<CourseModel[]>(allCourses);
             }
@@ -52,6 +59,9 @@ namespace JB.CourseCrusher.Api.Controllers
 
                 if (currentCourse == null) return NotFound($"No course with Course Id: {courseId}");
 
+                var email = User.FindFirst("https://cc/email")?.Value;
+                if (currentCourse.Owner != email) return this.StatusCode(StatusCodes.Status403Forbidden, "You do not have access to this course.");
+
                 return _mapper.Map<CourseModel>(currentCourse);
             }
             catch (System.Exception)
@@ -65,21 +75,24 @@ namespace JB.CourseCrusher.Api.Controllers
         {
             try
             {
-                var currentCourse = await _repository.Courses.GetCourseByCourseIdAsync(model.CourseId);
+                if (model.CourseId != null)
+                {
+                    var currentCourse = await _repository.Courses.GetCourseByCourseIdAsync(model.CourseId);
 
-                if (currentCourse != null) return NotFound($"CourseId already exists.");
+                    if (currentCourse != null) return NotFound($"CourseId already exists.");
+                }
 
-                var location = _linkGenerator.GetPathByAction("Get", "Courses", new { courseId = model.CourseId });
-
-                if (string.IsNullOrEmpty(location))
-                    return BadRequest("Could not use current courseId");
+                model.CourseId = Guid.NewGuid().ToString();
+                var email = User.FindFirst("https://cc/email")?.Value;
 
                 var course = _mapper.Map<Course>(model);
+                course.Owner = email;
+                course.Image = GenerateGradientCourseImage();
                 _repository.Courses.Create(course);
 
-                if(await _repository.SaveAsync())
+                if (await _repository.SaveAsync())
                 {
-                    return Created(location, _mapper.Map<CourseModel>(course));
+                    return Created(string.Empty, _mapper.Map<CourseModel>(course));
                 }
             }
             catch (System.Exception)
@@ -98,6 +111,9 @@ namespace JB.CourseCrusher.Api.Controllers
                 var oldCourse = await _repository.Courses.GetCourseByCourseIdAsync(courseId, false);
 
                 if (oldCourse == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
+
+                var email = User.FindFirst("https://cc/email")?.Value;
+                if (oldCourse.Owner != email) return this.StatusCode(StatusCodes.Status403Forbidden, "You do not have access to this course.");
 
                 _mapper.Map(model, oldCourse);
 
@@ -123,9 +139,18 @@ namespace JB.CourseCrusher.Api.Controllers
 
                 if (oldCourse == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
 
+                var email = User.FindFirst("https://cc/email")?.Value;
+                if (oldCourse.Owner != email) return this.StatusCode(StatusCodes.Status403Forbidden, "You do not have access to this course.");
+
                 var allQuestions = oldCourse.Questions;
                 foreach (var question in allQuestions)
+                {
+                    foreach (var answer in question.Answers)
+                        _repository.Answers.Delete(answer);
+
                     _repository.Questions.Delete(question);
+                }
+
 
                 _repository.Courses.Delete(oldCourse);
 
@@ -141,5 +166,99 @@ namespace JB.CourseCrusher.Api.Controllers
 
             return BadRequest();
         }
+
+        private string GenerateGradientCourseImage()
+        {
+            var sigma = random.NextDouble();
+
+            var list = new List<RGB>
+            {
+                new RGB
+                {
+                    R = 217,
+                    G = 227,
+                    B = 218
+                },
+                new RGB
+                {
+                    R = 236,
+                    G = 201,
+                    B = 199
+                },
+                new RGB
+                {
+                    R = 209,
+                    G = 207,
+                    B = 192
+                },
+                new RGB
+                {
+                    R = 194,
+                    G = 194,
+                    B = 180
+                },
+                new RGB
+                {
+                    R = 223,
+                    G = 234,
+                    B = 240
+                },
+                new RGB
+                {
+                    R = 223,
+                    G = 246,
+                    B = 202
+                },
+                new RGB
+                {
+                    R = 83,
+                    G = 139,
+                    B = 156
+                },
+                new RGB
+                {
+                    R = 242,
+                    G = 235,
+                    B = 219
+                },
+                new RGB
+                {
+                    R = 149,
+                    G = 237,
+                    B = 213
+                },
+                new RGB
+                {
+                    R = 255,
+                    G = 111,
+                    B = 119
+                },
+            };
+            var color1 = random.Next(list.Count);
+            var color2 = random.Next(list.Count);
+
+            using Bitmap bitmap = new Bitmap(600, 200);
+            using Graphics graphics = Graphics.FromImage(bitmap);
+            using LinearGradientBrush brush = new LinearGradientBrush(
+                new Rectangle(0, 0, 600, 200),
+                Color.FromArgb(list[color1].R, list[color1].G, list[color1].B),
+                Color.AntiqueWhite,
+                LinearGradientMode.ForwardDiagonal);
+                brush.SetSigmaBellShape((float)sigma);
+                graphics.FillRectangle(brush, new Rectangle(0, 0, 600, 200));
+
+            var ms = new MemoryStream();
+            bitmap.Save(ms, ImageFormat.Png);
+            byte[] bitmapdata = ms.ToArray();
+
+            return Convert.ToBase64String(bitmapdata);
+        }
+        private struct RGB
+        {
+            public int R;
+            public int G;
+            public int B;
+        }
     }
+
 }

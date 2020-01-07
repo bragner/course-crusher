@@ -6,6 +6,7 @@ using AutoMapper;
 using JB.CourseCrusher.Api.Data.Entities;
 using JB.CourseCrusher.Api.Data.Repositories.Interfaces;
 using JB.CourseCrusher.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -14,26 +15,29 @@ namespace JB.CourseCrusher.Api.Controllers
 {
     [Route("api/Courses/{courseId}/[controller]")]
     [ApiController]
+    [Authorize]
     public class QuestionsController : ControllerBase
     {
-        private IRepositoryWrapper _repository;
-        private IMapper _mapper;
-        private LinkGenerator _linkGenerator;
+        private readonly IRepositoryWrapper _repository;
+        private readonly IMapper _mapper;
 
-        public QuestionsController(IRepositoryWrapper repository, IMapper mapper, LinkGenerator linkGenerator)
+        public QuestionsController(IRepositoryWrapper repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
-            _linkGenerator = linkGenerator;
         }
         [HttpGet]
         public async Task<ActionResult<QuestionModel[]>> Get(string courseId)
         {
             try
             {
-                var allQuestions = await _repository.Questions.GetAllQuestionsFromCourse(courseId);
+                var course = await _repository.Courses.GetCourseByCourseIdAsync(courseId, false);
+                if (course == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
 
-                return _mapper.Map<QuestionModel[]>(allQuestions);
+                var email = User.FindFirst("https://cc/email")?.Value;
+                if (course.Owner != email) return this.StatusCode(StatusCodes.Status403Forbidden, "You do not have access to this course.");
+
+                return _mapper.Map<QuestionModel[]>(course.Questions);
             }
             catch (System.Exception)
             {
@@ -45,7 +49,13 @@ namespace JB.CourseCrusher.Api.Controllers
         {
             try
             {
-                var allQuestions = await _repository.Questions.GetAllQuestionsFromCourse(courseId);
+                var course = await _repository.Courses.GetCourseByCourseIdAsync(courseId, false);
+                if (course == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
+
+                var email = User.FindFirst("https://cc/email")?.Value;
+                if (course.Owner != email) return this.StatusCode(StatusCodes.Status403Forbidden, "You do not have access to this course.");
+
+                var allQuestions = course.Questions;
 
                 if (allQuestions == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
 
@@ -69,23 +79,27 @@ namespace JB.CourseCrusher.Api.Controllers
 
                 if (course == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
 
+                var email = User.FindFirst("https://cc/email")?.Value;
+                if (course.Owner != email) return this.StatusCode(StatusCodes.Status403Forbidden, "You do not have access to this course.");
+
                 var existingQuestion = course.Questions.FirstOrDefault(x => x.QuestionId == model.QuestionId);
 
                 if (existingQuestion != null) return BadRequest("Question Id already exists.");
 
+                model.QuestionId = Guid.NewGuid().ToString();
                 var question = _mapper.Map<Question>(model);
                 question.Course = course;
-
+                question.Answers = question.Answers.Where(x => !string.IsNullOrEmpty(x.AnswerPhrase)).ToList();
+                question.Answers.ForEach(x => x.AnswerId = Guid.NewGuid().ToString());
+               
                 _repository.Questions.Create(question);
 
                 if (await _repository.SaveAsync())
                 {
-                    var url = _linkGenerator.GetPathByAction(HttpContext, "Get", values: new { courseId, id = model.QuestionId });
-
-                    return Created(url, _mapper.Map<QuestionModel>(question));
+                    return Created(string.Empty, _mapper.Map<QuestionModel>(question));
                 }
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database failure.");
             }
@@ -98,11 +112,13 @@ namespace JB.CourseCrusher.Api.Controllers
         {
             try
             {
-                var allQuestions = await _repository.Questions.GetAllQuestionsFromCourse(courseId);
+                var course = await _repository.Courses.GetCourseByCourseIdAsync(courseId, false);
+                if (course == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
 
-                if (allQuestions == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
+                var email = User.FindFirst("https://cc/email")?.Value;
+                if (course.Owner != email) return this.StatusCode(StatusCodes.Status403Forbidden, "You do not have access to this course.");
 
-                var oldQuestion = allQuestions.FirstOrDefault(x => x.QuestionId == questionId);
+                var oldQuestion = course.Questions.FirstOrDefault(x => x.QuestionId == questionId);
 
                 if (oldQuestion == null) return NotFound($"Question with Id [{questionId}] doesn't exists.");
 
@@ -125,13 +141,18 @@ namespace JB.CourseCrusher.Api.Controllers
         {
             try
             {
-                var allQuestions = await _repository.Questions.GetAllQuestionsFromCourse(courseId);
+                var course = await _repository.Courses.GetCourseByCourseIdAsync(courseId, false);
+                if (course == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
 
-                if (allQuestions == null) return NotFound($"Course with Id [{courseId}] doesn't exists.");
+                var email = User.FindFirst("https://cc/email")?.Value;
+                if (course.Owner != email) return this.StatusCode(StatusCodes.Status403Forbidden, "You do not have access to this course.");
 
-                var question = allQuestions.FirstOrDefault(x => x.QuestionId == questionId);
+                var question = course.Questions.FirstOrDefault(x => x.QuestionId == questionId);
 
                 if (question == null) return NotFound($"Question with Id [{questionId}] doesn't exists.");
+
+                foreach (var answer in question.Answers)
+                    _repository.Answers.Delete(answer);
 
                 _repository.Questions.Delete(question);
 

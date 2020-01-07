@@ -4,14 +4,16 @@ using JB.CourseCrusher.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JB.CourseCrusher.Api.Migrations
 {
     [DbContext(typeof(CourseCrusherContext))]
-    partial class CourseCrusherContextModelSnapshot : ModelSnapshot
+    [Migration("20191103123012_answers")]
+    partial class answers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
